@@ -21,7 +21,7 @@ module.exports.createCard = (req, res) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       } else {
-        res.status(SERVER_ERROR).send({message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
+        res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
       }
     });
 };
