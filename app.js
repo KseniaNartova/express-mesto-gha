@@ -7,9 +7,6 @@ const cards = require('./routes/card');
 const { PORT = 3000 } = process.env;
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/mestodb', {
-  useNewUrlParser: true,
-});
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -19,10 +16,14 @@ app.use((req, res, next) => {
   next();
 });
 
+mongoose.connect('mongodb://localhost:27017/mestodb', {
+  useNewUrlParser: true,
+});
+
 app.use('/users', users);
 app.use('/cards', cards);
 
-app.all('*', (req, res) => {
+app.all('/*', (req, res) => {
   res.status(NOT_FOUND).send({ message: 'Cтраницa не существует' });
 });
 
