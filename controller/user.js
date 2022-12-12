@@ -1,7 +1,6 @@
 const User = require('../models/user');
 const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require('../utils/constants');
 
-
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
@@ -45,9 +44,9 @@ module.exports.createUser = (req, res) => {
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
 
-  User.findOneAndUpdate(req.user._id, 
-    { name, about }, 
-    { new: true, runValidators: true })
+  User.findOneAndUpdate(req.user._id,
+    { name, about },
+    { new: true, runValidators: true }),
     .then((user) => {
       if (!user) {
         res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });

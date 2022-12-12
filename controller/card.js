@@ -71,7 +71,7 @@ module.exports.dislikeCard = (req, res) => {
     req.params.cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
-  ) 
+  )
     .populate('owner', 'likes')
     .then((card) => {
       if (!card) {
