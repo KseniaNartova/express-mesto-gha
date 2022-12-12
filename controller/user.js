@@ -1,37 +1,134 @@
+// const User = require('../models/user');
+// const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require('../utils/constants');
+
+// module.exports.getUsers = (req, res) => {
+//   User.find({})
+//     .then((users) => res.send(users))
+//     .catch(() => {
+//       res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
+//     });
+// };
+
+// module.exports.getUserId = (req, res) => {
+//   const { userId } = req.params;
+//   User.findById(userId)
+//     .then((user) => {
+//       if (!user) {
+//         res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
+//         return;
+//       }
+//       res.send(user);
+//     })
+//     .catch((err) => {
+//       if (err.name === 'CastError') {
+//         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+//       } else {
+//         res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
+//       }
+//     });
+// };
+
+// module.exports.createUser = (req, res) => {
+//   const { name, about, avatar } = req.body;
+//   User.create({ name, about, avatar })
+//     .then((user) => res.send({
+//       _id: user._id,
+//       name,
+//       about,
+//       avatar,
+//     }))
+//     .catch((err) => {
+//       if (err.name === 'ValidationError') {
+//         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+//       } else {
+//         res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
+//       }
+//     });
+// };
+
+// module.exports.updateUser = (req, res) => {
+//   const { name, about } = req.body;
+//   User.findOneAndUpdate(
+//     req.user._id,
+//     { name, about },
+//     { new: true, runValidators: true },
+//   )
+//     .then((user) => {
+//       if (!user) {
+//         res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
+//         return;
+//       }
+//       res.send(user);
+//     })
+//     .catch((err) => {
+//       if (err.name === 'ValidationError' || err.name === 'CastError') {
+//         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+//       } else {
+//         res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
+//       }
+//     });
+// };
+
+// module.exports.updateAvatar = (req, res) => {
+//   const { avatar } = req.body;
+
+//   User.findOneAndUpdate(
+//     req.user._id,
+//     { avatar },
+//     { new: true, runValidators: true },
+//   )
+//     .then((user) => {
+//       if (!user) {
+//         res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
+//         return;
+//       }
+//       res.send(user);
+//     })
+//     .catch((err) => {
+//       if (err.name === 'ValidationError' || err.name === 'CastError') {
+//         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+//       } else {
+//         res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
+//       }
+//     });
+// };
+
 const User = require('../models/user');
-const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require('../utils/constants');
+const {
+  BAD_REQUEST, NOT_FOUND, SERVER_ERROR, CREATED,
+} = require('../utils/constants');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send(users))
+    .then((users) => res.send({ data: users }))
     .catch(() => {
       res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
     });
 };
 
 module.exports.getUserId = (req, res) => {
-  const { userId } = req.params;
-  User.findById(userId)
+  User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
         res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
         return;
       }
-      res.send(user);
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
+        return;
       }
+      res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
     });
 };
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
+
   User.create({ name, about, avatar })
-    .then((user) => res.send({
+    .then((user) => res.status(CREATED).send({
       _id: user._id,
       name,
       about,
@@ -40,19 +137,16 @@ module.exports.createUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
+        return;
       }
+      res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
     });
 };
 
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
-  User.findOneAndUpdate(
-    req.user._id,
-    { name, about },
-    { new: true, runValidators: true },
-  )
+
+  User.findOneAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
@@ -63,20 +157,16 @@ module.exports.updateUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
+        return;
       }
+      res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
     });
 };
 
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
-  User.findOneAndUpdate(
-    req.user._id,
-    { avatar },
-    { new: true, runValidators: true },
-  )
+  User.findOneAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
@@ -87,8 +177,8 @@ module.exports.updateAvatar = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
+        return;
       }
+      res.status(SERVER_ERROR).send({ message: 'Сервер столкнулся с неожиданной ошибкой, которая помешала ему выполнить запрос' });
     });
 };
