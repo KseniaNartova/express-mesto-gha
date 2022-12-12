@@ -32,10 +32,10 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.send({
-      _id: user._id,
       name,
       about,
       avatar,
+      _id: user._id,
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
