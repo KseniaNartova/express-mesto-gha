@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const AuthError = require('../errors/AuthError');
 const isEmail = require('validator/lib/isEmail');
+const AuthError = require('../errors/AuthError');
 
 const regexValid = /^http[s]?:\/\/(www\.)?[[a-zA-Z0-9_]]+\.[\w-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
 
