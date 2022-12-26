@@ -1,43 +1,56 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const isEmail = require('validator/lib/isEmail');
+const validator = require('validator');
+// const isEmail = require('validator/lib/isEmail');
 const AuthError = require('../errors/AuthError');
 
-const regexValid = /^http[s]?:\/\/(www\.)?[[a-zA-Z0-9_]]+\.[\w-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
+// const regexValid = /^http[s]?:\/\/(www\.)?[[a-zA-Z0-9_]]+\.[\w-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
 
 const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      // required: true,
       minlength: 2,
       maxlength: 30,
       default: 'Жак-Ив Кусто',
     },
     about: {
       type: String,
-      required: true,
+      // required: true,
       minlength: 2,
       maxlength: 30,
       default: 'Исследователь',
     },
     avatar: {
       type: String,
-      required: true,
+      // required: true,
       default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
       validate: {
-        validator: (link) => regexValid.test(link),
-        message: () => 'Указан некорректный URL',
+        validator(link) {
+          return /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w\W.-]*)#?$/.test(link);
+        },
+        message: (props) => `${props.value} вы указали некорретный URL`,
       },
+      // validate: {
+      //   validator: (link) => regexValid.test(link),
+      //   message: () => 'Указан некорректный URL',
+      // },
     },
     email: {
       type: String,
       required: true,
       unique: true,
       validate: {
-        validator: (email) => isEmail(email),
-        message: () => 'Указан некорректный вид почты',
+        validator(email) {
+          return validator.isEmail(email);
+        },
+        message: (props) => `${props.value} вы указали некорретный адрес электронной почты`,
       },
+      // validate: {
+      //   validator: (email) => isEmail(email),
+      //   message: () => 'Указан некорректный вид почты',
+      // },
     },
     password: {
       type: String,
@@ -48,17 +61,33 @@ const userSchema = new mongoose.Schema(
   { versionKey: false },
 );
 
-// eslint-disable-next-line func-names
-userSchema.statics.findUserByCredentials = function (email, password) {
+// // eslint-disable-next-line func-names
+// userSchema.statics.findUserByCredentials = function (email, password) {
+//   return this.findOne({ email }).select('+password')
+//     .then((user) => {
+//       if (!user) {
+//         return Promise.reject(new AuthError('Указана неправильная почта или пароль'));
+//       }
+//       return bcrypt.compare(password, user.password)
+//         .then((matched) => {
+//           if (!matched) {
+//             return Promise.reject(new AuthError('Указана неправильная почта или пароль'));
+//           }
+//           return user;
+//         });
+//     });
+// };
+
+userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new AuthError('Указана неправильная почта или пароль'));
+        throw new AuthError({ message: 'Указана неправильная почта или пароль' });
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new AuthError('Указана неправильная почта или пароль'));
+            throw new AuthError({ message: 'Указана неправильная почта или пароль' });
           }
           return user;
         });
