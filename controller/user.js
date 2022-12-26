@@ -106,11 +106,11 @@ module.exports.getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(new NotFoundError('Пользователь не найден'))
     .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные'));
-      }
-      next(err);
-    });
-  // .catch(next);
+    // .catch((err) => {
+    //   if (err.name === 'CastError') {
+    //     next(new BadRequestError('Переданы некорректные данные'));
+    //   }
+    //   next(err);
+    // });
+    .catch(next);
 };
