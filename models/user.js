@@ -78,7 +78,31 @@ const userSchema = new mongoose.Schema(
 //     });
 // };
 
-userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
+// userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
+//   return this.findOne({ email }).select('+password')
+//     .then((user) => {
+//       if (!user) {
+//         throw new AuthError('Указана неправильная почта или пароль');
+//       }
+//       return bcrypt.compare(password, user.password)
+//         .then((matched) => {
+//           if (!matched) {
+//             throw new AuthError('Указана неправильная почта или пароль');
+//           }
+//           return user;
+//         });
+//     });
+// };
+
+// eslint-disable-next-line func-names
+userSchema.methods.toJSON = function () {
+  const user = this.toObject();
+  delete user.password;
+  return user;
+};
+
+// eslint-disable-next-line func-names
+userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
