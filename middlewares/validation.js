@@ -1,6 +1,7 @@
 const { celebrate, Joi } = require('celebrate');
 
-const regexValid = /^http[s]?:\/\/(www\.)?[[a-zA-Z0-9_]]+\.[\w-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
+// const regexValid = /^http[s]?:\/\/(www\.)?[[a-zA-Z0-9_]]+\.[\w-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
+const regexValid = /^((http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-/])*)?/;
 
 const getUserIdValidator = celebrate({
   params: Joi.object().keys({
@@ -27,20 +28,20 @@ const loginValidator = celebrate({
 
 const updateUserValidator = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
   }),
 });
 
 const updateAvatarValidator = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(regexValid),
+    avatar: Joi.string().required().pattern(regexValid),
   }),
 });
 
 const createCardValidator = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().required().min(2).max(30),
     link: Joi.string().required().pattern(regexValid),
   }),
 });

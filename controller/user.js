@@ -20,7 +20,7 @@ module.exports.getUserId = (req, res, next) => {
     .then((users) => res.send(users))
     .catch((err) => {
       if (err.name === 'CastError') {
-        return Promise.reject(new BadRequestError('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные'));
       }
       return next(err);
     });
@@ -45,10 +45,10 @@ module.exports.createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return Promise.reject(new BadRequestError('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные'));
       }
       if (err.code === 11000) {
-        return Promise.reject(new ConflictError('Пользователь с таким email уже существует'));
+        next(new ConflictError('Пользователь с таким email уже существует'));
       }
       return next(err);
     });
@@ -70,7 +70,7 @@ module.exports.login = (req, res, next) => {
 
 module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
-  User.findOneAndUpdate(
+  User.findByIdAndUpdate(
     req.user._id,
     { name, about },
     { new: true, runValidators: true },
@@ -79,7 +79,7 @@ module.exports.updateUser = (req, res, next) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return Promise.reject(new BadRequestError('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные'));
       }
       return next(err);
     });
@@ -87,8 +87,7 @@ module.exports.updateUser = (req, res, next) => {
 
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-
-  User.findOneAndUpdate(
+  User.findByIdAndUpdate(
     req.user._id,
     { avatar },
     { new: true, runValidators: true },
@@ -97,7 +96,7 @@ module.exports.updateAvatar = (req, res, next) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return Promise.reject(new BadRequestError('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные'));
       }
       return next(err);
     });
@@ -109,7 +108,7 @@ module.exports.getUserInfo = (req, res, next) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        return Promise.reject(new BadRequestError('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные'));
       }
       return next(err);
     });
