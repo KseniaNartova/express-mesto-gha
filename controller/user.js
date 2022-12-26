@@ -110,6 +110,7 @@ module.exports.getUserInfo = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные'));
       }
-      return next(err);
+      next(err);
     });
+  // .catch(next);
 };
