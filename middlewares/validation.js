@@ -1,7 +1,7 @@
 const { celebrate, Joi } = require('celebrate');
 
-// const regexValid = /^http[s]?:\/\/(www\.)?[[a-zA-Z0-9_]]+\.[\w-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
-const regexValid = /^((http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-/])*)?/;
+const regexValid = /^http[s]?:\/\/(www\.)?[[a-zA-Z0-9_]]+\.[\w-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
+// const regexValid = /^((http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-/])*)?/;
 
 const getUserIdValidator = celebrate({
   params: Joi.object().keys({
