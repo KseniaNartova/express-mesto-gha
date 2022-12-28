@@ -31,7 +31,6 @@ module.exports.deleteCard = (req, res, next) => {
       if (card.owner._id.toString() === req.user._id) {
         res.send({ removed: true, data: card });
       } else {
-        // throw new ForbiddenError('Вы не являетесь автором карточки');
         next(new ForbiddenError('Вы не являетесь автором карточки'));
       }
     })

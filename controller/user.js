@@ -4,6 +4,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictError = require('../errors/ConflictError');
+const AuthError = require('../errors/AuthError');
 
 const { SECRET_JWT = 'very-secret-key' } = process.env;
 
@@ -67,7 +68,10 @@ module.exports.login = (req, res, next) => {
       );
       res.send({ token });
     })
-    .catch(next);
+    // .catch(next);
+    .catch(() => {
+      next(new AuthError('Необходима авторизация'));
+    });
 };
 
 module.exports.updateUser = (req, res, next) => {
