@@ -27,11 +27,20 @@ module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   Card.findByIdAndRemove(cardId)
     .orFail(new NotFoundError('Карточка не найдена'))
+    // .then((card) => {
+    //   if (card.owner._id.toString() !== req.user._id) {
+    //     next(new ForbiddenError('Вы не являетесь автором карточки'));
+    //   } else {
+    //     throw new ForbiddenErr('Вы не можете удалить чужую карточку');
+    //   }
+    //   return Card.findByIdAndRemove(req.params.cardId).then(() => res.send(card));
+    // })
     .then((card) => {
-      if (card.owner._id.toString() !== req.user._id) {
-        next(new ForbiddenError('Вы не являетесь автором карточки'));
+      if (card.owner._id.toString() === req.user._id) {
+        res.send({ removed: true, data: card });
+      } else {
+        throw new ForbiddenError('Вы не являетесь автором карточки');
       }
-      return Card.findByIdAndRemove(req.params.cardId).then(() => res.send(card));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
