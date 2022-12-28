@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// const regexValid = /^http[s]?:\/\/(www\.)?[[a-zA-Z0-9_]]+\.[\w-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
+const regexValid = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -13,15 +13,9 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator(link) {
-        return /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w\W.-]*)#?$/.test(link);
-      },
-      message: (props) => `${props.value} вы указали некорретный URL`,
+      validator: (link) => regexValid.test(link),
+      message: () => 'Указан некорректный URL',
     },
-    // validate: {
-    //   validator: (link) => regexValid.test(link),
-    //   message: () => 'Указан некорректный URL',
-    // },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
