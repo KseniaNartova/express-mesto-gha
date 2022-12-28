@@ -68,7 +68,6 @@ module.exports.login = (req, res, next) => {
       );
       res.send({ token });
     })
-    // .catch(next);
     .catch(() => {
       next(new AuthError('Необходима авторизация'));
     });
